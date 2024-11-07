@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class OrderItem extends BaseModel {
+public class OrderItemModel extends BaseModel {
 
     private Long productId;
 
@@ -17,6 +17,6 @@ public class OrderItem extends BaseModel {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
-    private Order order;
+    private OrderModel order;
 
 }

@@ -4,22 +4,18 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
-public class Order extends BaseModel {
+public class OrderHistoryModel extends BaseModel {
 
-    private Long userId;
-
-    private Double totalAmount;
+    private Long orderId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItem> items;
+    private LocalDateTime timestamp;
 
 }
-
