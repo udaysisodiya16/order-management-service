@@ -61,7 +61,7 @@ public class OrderController {
     @GetMapping("/{orderId}/track")
     public ResponseEntity<List<OrderHistoryResponseDto>> trackOrder(@PathVariable Long orderId) {
         List<OrderHistoryModel> orderHistory = orderService.trackOrder(orderId);
-        return ResponseEntity.ok(orderMapper.OrderHistoryModelsToOrderHistoryResponseDtos(orderHistory));
+        return ResponseEntity.ok(orderMapper.orderHistoryModelsToOrderHistoryResponseDtos(orderHistory));
     }
 
     private OrderResponseDto getOrderResponseDto(OrderModel order) {

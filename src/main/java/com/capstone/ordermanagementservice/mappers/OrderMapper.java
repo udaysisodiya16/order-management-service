@@ -16,5 +16,5 @@ public interface OrderMapper {
 
     OrderResponseDto orderModelToOrderResponseDto(OrderModel createdOrder);
 
-    List<OrderHistoryResponseDto> OrderHistoryModelsToOrderHistoryResponseDtos(List<OrderHistoryModel> orderHistory);
+    List<OrderHistoryResponseDto> orderHistoryModelsToOrderHistoryResponseDtos(List<OrderHistoryModel> orderHistory);
 }
