@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -64,5 +65,10 @@ public class OrderService implements IOrderService {
         history.setLastUpdatedAt(order.getLastUpdatedAt());
         history.setTimestamp(LocalDateTime.now());
         orderHistoryRepo.save(history);
+    }
+
+    @Override
+    public List<OrderModel> getOrderHistory(Long userId) {
+        return orderRepo.findByUserIdOrderByCreatedAtDesc(userId);
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/order")
 public class OrderController {
@@ -24,16 +26,29 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> createOrder(@RequestBody OrderRequestDto orderRequest) {
         OrderModel order = orderMapper.orderRequestDtoToOrderModel(orderRequest);
         OrderModel createdOrder = orderService.createOrder(order);
-        OrderResponseDto orderResponseDto = orderMapper.orderModelToOrderResponseDto(createdOrder);
-        orderResponseDto.setTotalAmount(createdOrder.getItems().stream()
-                .mapToDouble(item -> item.getPrice() * item.getQuantity()).sum());
-        return ResponseEntity.ok(orderResponseDto);
+        return ResponseEntity.ok(getOrderResponseDto(createdOrder));
     }
 
     @PutMapping("/{orderId}/status")
     public ResponseEntity<Boolean> updateOrderStatus(@PathVariable Long orderId, @RequestParam OrderStatus orderStatus) {
         Boolean status = orderService.updateOrderStatus(orderId, orderStatus);
         return ResponseEntity.ok(status);
+    }
+
+    @GetMapping("/{userId}/history")
+    public ResponseEntity<List<OrderResponseDto>> getOrderHistory(@PathVariable Long userId) {
+        List<OrderModel> orders = orderService.getOrderHistory(userId);
+        List<OrderResponseDto> response = orders.stream()
+                .map(this::getOrderResponseDto)
+                .toList();
+        return ResponseEntity.ok(response);
+    }
+
+    private OrderResponseDto getOrderResponseDto(OrderModel order) {
+        OrderResponseDto orderResponseDto = orderMapper.orderModelToOrderResponseDto(order);
+        orderResponseDto.setTotalAmount(order.getItems().stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity()).sum());
+        return orderResponseDto;
     }
 }
 
