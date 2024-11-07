@@ -1,9 +1,11 @@
 package com.capstone.ordermanagementservice.controlles;
 
 import com.capstone.ordermanagementservice.constants.OrderStatus;
+import com.capstone.ordermanagementservice.dtos.OrderHistoryResponseDto;
 import com.capstone.ordermanagementservice.dtos.OrderRequestDto;
 import com.capstone.ordermanagementservice.dtos.OrderResponseDto;
 import com.capstone.ordermanagementservice.mappers.OrderMapper;
+import com.capstone.ordermanagementservice.models.OrderHistoryModel;
 import com.capstone.ordermanagementservice.models.OrderModel;
 import com.capstone.ordermanagementservice.services.IOrderService;
 import org.mapstruct.factory.Mappers;
@@ -22,11 +24,23 @@ public class OrderController {
 
     private final OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
 
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderResponseDto> getOrderDetail(@PathVariable Long orderId) {
+        OrderModel order = orderService.getOrderDetail(orderId);
+        return ResponseEntity.ok(getOrderResponseDto(order));
+    }
+
     @PostMapping
     public ResponseEntity<OrderResponseDto> createOrder(@RequestBody OrderRequestDto orderRequest) {
         OrderModel order = orderMapper.orderRequestDtoToOrderModel(orderRequest);
         OrderModel createdOrder = orderService.createOrder(order);
         return ResponseEntity.ok(getOrderResponseDto(createdOrder));
+    }
+
+    @GetMapping("/{orderId}/status")
+    public ResponseEntity<OrderStatus> getOrderStatus(@PathVariable Long orderId) {
+        OrderStatus orderStatus = orderService.getOrderStatus(orderId);
+        return ResponseEntity.ok(orderStatus);
     }
 
     @PutMapping("/{orderId}/status")
@@ -36,12 +50,18 @@ public class OrderController {
     }
 
     @GetMapping("/{userId}/history")
-    public ResponseEntity<List<OrderResponseDto>> getOrderHistory(@PathVariable Long userId) {
-        List<OrderModel> orders = orderService.getOrderHistory(userId);
+    public ResponseEntity<List<OrderResponseDto>> getAllUserOrder(@PathVariable Long userId) {
+        List<OrderModel> orders = orderService.getAllUserOrder(userId);
         List<OrderResponseDto> response = orders.stream()
                 .map(this::getOrderResponseDto)
                 .toList();
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{orderId}/track")
+    public ResponseEntity<List<OrderHistoryResponseDto>> trackOrder(@PathVariable Long orderId) {
+        List<OrderHistoryModel> orderHistory = orderService.trackOrder(orderId);
+        return ResponseEntity.ok(orderMapper.OrderHistoryModelsToOrderHistoryResponseDtos(orderHistory));
     }
 
     private OrderResponseDto getOrderResponseDto(OrderModel order) {

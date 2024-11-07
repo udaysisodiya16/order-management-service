@@ -27,6 +27,11 @@ public class OrderService implements IOrderService {
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
+    public OrderModel getOrderDetail(Long orderId) {
+        return orderRepo.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Invalid OrderId"));
+    }
+
+    @Override
     public OrderModel createOrder(OrderModel order) {
         order.setStatus(com.capstone.ordermanagementservice.models.OrderStatus.CREATED);
         OrderModel savedOrder = orderRepo.save(order);
@@ -38,6 +43,13 @@ public class OrderService implements IOrderService {
         kafkaTemplate.send("order-topic", "OrderCreated: " + savedOrder.getId());
 
         return savedOrder;
+    }
+
+    @Override
+    public OrderStatus getOrderStatus(Long orderId) {
+        return OrderStatus.valueOf(orderRepo.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid OrderId"))
+                .getStatus().name());
     }
 
     @Override
@@ -68,7 +80,12 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public List<OrderModel> getOrderHistory(Long userId) {
+    public List<OrderModel> getAllUserOrder(Long userId) {
         return orderRepo.findByUserIdOrderByCreatedAtDesc(userId);
+    }
+
+    @Override
+    public List<OrderHistoryModel> trackOrder(Long orderId) {
+        return orderHistoryRepo.findAllByOrderId(orderId);
     }
 }
