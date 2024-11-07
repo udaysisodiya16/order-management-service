@@ -1,8 +1,8 @@
 package com.capstone.ordermanagementservice.services;
 
+import com.capstone.ordermanagementservice.constants.OrderStatus;
 import com.capstone.ordermanagementservice.models.OrderHistoryModel;
 import com.capstone.ordermanagementservice.models.OrderModel;
-import com.capstone.ordermanagementservice.models.OrderStatus;
 import com.capstone.ordermanagementservice.repos.OrderHistoryRepo;
 import com.capstone.ordermanagementservice.repos.OrderRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class OrderService implements IOrderService {
 
     @Override
     public OrderModel createOrder(OrderModel order) {
-        order.setStatus(OrderStatus.CREATED);
+        order.setStatus(com.capstone.ordermanagementservice.models.OrderStatus.CREATED);
         order.setCreatedAt(LocalDateTime.now());
 
         OrderModel savedOrder = orderRepo.save(order);
@@ -41,20 +41,19 @@ public class OrderService implements IOrderService {
         return savedOrder;
     }
 
-
     @Override
-    public Boolean updateOrderStatus(Long orderId, OrderStatus status) {
+    public Boolean updateOrderStatus(Long orderId, OrderStatus orderStatus) {
         OrderModel order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
 
-        order.setStatus(status);
+        order.setStatus(com.capstone.ordermanagementservice.models.OrderStatus.valueOf(orderStatus.name()));
         orderRepo.save(order);
 
         // Add history
         createOrderHistory(order);
 
         // Publish to Kafka
-        kafkaTemplate.send("order-topic", "OrderStatusUpdated: " + order.getId() + " -> " + status);
+        kafkaTemplate.send("order-topic", "OrderStatusUpdated: " + order.getId() + " -> " + orderStatus);
 
         return true;
     }
