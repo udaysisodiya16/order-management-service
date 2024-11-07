@@ -13,7 +13,7 @@ public class OrderModel extends BaseModel {
 
     private Long userId;
 
-    private Double totalAmount;
+    private String deliveryAddress;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;

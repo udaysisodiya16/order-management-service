@@ -11,8 +11,8 @@ public class OrderRequestDto {
 
     private Long userId;
 
-    private Double totalAmount;
-
     private List<OrderItemDto> items;
+
+    private String deliveryAddress;
 
 }

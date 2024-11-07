@@ -28,8 +28,6 @@ public class OrderService implements IOrderService {
     @Override
     public OrderModel createOrder(OrderModel order) {
         order.setStatus(com.capstone.ordermanagementservice.models.OrderStatus.CREATED);
-        order.setCreatedAt(LocalDateTime.now());
-
         OrderModel savedOrder = orderRepo.save(order);
 
         // Add history

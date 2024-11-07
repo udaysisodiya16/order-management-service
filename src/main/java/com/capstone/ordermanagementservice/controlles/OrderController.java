@@ -24,7 +24,10 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> createOrder(@RequestBody OrderRequestDto orderRequest) {
         OrderModel order = orderMapper.orderRequestDtoToOrderModel(orderRequest);
         OrderModel createdOrder = orderService.createOrder(order);
-        return ResponseEntity.ok(orderMapper.orderModelToOrderResponseDto(createdOrder));
+        OrderResponseDto orderResponseDto = orderMapper.orderModelToOrderResponseDto(createdOrder);
+        orderResponseDto.setTotalAmount(createdOrder.getItems().stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity()).sum());
+        return ResponseEntity.ok(orderResponseDto);
     }
 
     @PutMapping("/{orderId}/status")
