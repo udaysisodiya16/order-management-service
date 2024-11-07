@@ -1,13 +1,14 @@
 package com.capstone.ordermanagementservice.mappers;
 
-import com.capstone.ordermanagementservice.dtos.OrderDto;
+import com.capstone.ordermanagementservice.dtos.OrderRequestDto;
+import com.capstone.ordermanagementservice.dtos.OrderResponseDto;
 import com.capstone.ordermanagementservice.models.OrderModel;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
 
-    OrderModel orderDtoToOrderModel(OrderDto orderRequest);
+    OrderModel orderRequestDtoToOrderModel(OrderRequestDto orderRequest);
 
-    OrderDto orderModelToOrderDto(OrderModel createdOrder);
+    OrderResponseDto orderModelToOrderResponseDto(OrderModel createdOrder);
 }

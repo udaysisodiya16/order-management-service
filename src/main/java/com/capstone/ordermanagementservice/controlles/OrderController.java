@@ -1,7 +1,8 @@
 package com.capstone.ordermanagementservice.controlles;
 
 import com.capstone.ordermanagementservice.constants.OrderStatus;
-import com.capstone.ordermanagementservice.dtos.OrderDto;
+import com.capstone.ordermanagementservice.dtos.OrderRequestDto;
+import com.capstone.ordermanagementservice.dtos.OrderResponseDto;
 import com.capstone.ordermanagementservice.mappers.OrderMapper;
 import com.capstone.ordermanagementservice.models.OrderModel;
 import com.capstone.ordermanagementservice.services.IOrderService;
@@ -20,10 +21,10 @@ public class OrderController {
     private final OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
 
     @PostMapping
-    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderDto orderRequest) {
-        OrderModel order = orderMapper.orderDtoToOrderModel(orderRequest);
+    public ResponseEntity<OrderResponseDto> createOrder(@RequestBody OrderRequestDto orderRequest) {
+        OrderModel order = orderMapper.orderRequestDtoToOrderModel(orderRequest);
         OrderModel createdOrder = orderService.createOrder(order);
-        return ResponseEntity.ok(orderMapper.orderModelToOrderDto(createdOrder));
+        return ResponseEntity.ok(orderMapper.orderModelToOrderResponseDto(createdOrder));
     }
 
     @PutMapping("/{orderId}/status")
