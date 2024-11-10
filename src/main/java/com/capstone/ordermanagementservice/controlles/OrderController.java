@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +37,7 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> createOrder(@RequestBody @Valid OrderRequestDto orderRequest) {
         OrderModel order = orderMapper.orderRequestDtoToOrderModel(orderRequest);
         OrderModel createdOrder = orderService.createOrder(order);
-        return ResponseEntity.ok(getOrderResponseDto(createdOrder));
+        return ResponseEntity.status(HttpStatus.CREATED).body(getOrderResponseDto(createdOrder));
     }
 
     @GetMapping("/{orderId}/status")

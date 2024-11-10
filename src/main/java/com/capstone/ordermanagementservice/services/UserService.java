@@ -14,7 +14,7 @@ public class UserService implements IUserService {
     @Autowired
     private RestHelper restHelper;
 
-    @Value("$(user.management.service.url)")
+    @Value("${user.management.service.url}")
     private String userManagementServiceUrl;
 
     @Override

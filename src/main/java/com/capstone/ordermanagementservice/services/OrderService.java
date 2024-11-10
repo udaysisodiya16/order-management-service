@@ -96,7 +96,7 @@ public class OrderService implements IOrderService {
         orderNotificationDto.setTo(userDetail.getEmail());
         orderNotificationDto.setSubject("Order Update");
         orderNotificationDto.setBody("Your order with id:" + order.getId() + "has updated to " + order.getStatus());
-        String message = null;
+        String message;
         try {
             message = objectMapper.writeValueAsString(orderNotificationDto);
         } catch (JsonProcessingException e) {
