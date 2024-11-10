@@ -1,12 +1,16 @@
 package com.capstone.ordermanagementservice.services;
 
+import com.capstone.ordermanagementservice.clients.KafkaClient;
 import com.capstone.ordermanagementservice.constants.OrderStatus;
+import com.capstone.ordermanagementservice.dtos.OrderNotificationDto;
+import com.capstone.ordermanagementservice.dtos.UserDetailResponseDto;
 import com.capstone.ordermanagementservice.models.OrderHistoryModel;
 import com.capstone.ordermanagementservice.models.OrderModel;
 import com.capstone.ordermanagementservice.repos.OrderHistoryRepo;
 import com.capstone.ordermanagementservice.repos.OrderRepo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +28,13 @@ public class OrderService implements IOrderService {
     private OrderHistoryRepo orderHistoryRepo;
 
     @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private IUserService userService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private KafkaClient kafkaClient;
 
     @Override
     public OrderModel getOrderDetail(Long orderId) {
@@ -40,7 +50,7 @@ public class OrderService implements IOrderService {
         createOrderHistory(savedOrder);
 
         // Publish to Kafka
-        kafkaTemplate.send("order-topic", "OrderCreated: " + savedOrder.getId());
+        sendOrderNotification(savedOrder);
 
         return savedOrder;
     }
@@ -64,7 +74,7 @@ public class OrderService implements IOrderService {
         createOrderHistory(order);
 
         // Publish to Kafka
-        kafkaTemplate.send("order-topic", "OrderStatusUpdated: " + order.getId() + " -> " + orderStatus);
+        sendOrderNotification(order);
 
         return true;
     }
@@ -77,6 +87,22 @@ public class OrderService implements IOrderService {
         history.setLastUpdatedAt(order.getLastUpdatedAt());
         history.setTimestamp(LocalDateTime.now());
         orderHistoryRepo.save(history);
+    }
+
+    private void sendOrderNotification(OrderModel order) {
+        UserDetailResponseDto userDetail = userService.getUserDetail(order.getUserId());
+        OrderNotificationDto orderNotificationDto = new OrderNotificationDto();
+        orderNotificationDto.setFrom("ordermanagementservice@gmail.com");
+        orderNotificationDto.setTo(userDetail.getEmail());
+        orderNotificationDto.setSubject("Order Update");
+        orderNotificationDto.setBody("Your order with id:" + order.getId() + "has updated to " + order.getStatus());
+        String message = null;
+        try {
+            message = objectMapper.writeValueAsString(orderNotificationDto);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        kafkaClient.sendOrderNotification(message);
     }
 
     @Override

@@ -8,6 +8,8 @@ import com.capstone.ordermanagementservice.mappers.OrderMapper;
 import com.capstone.ordermanagementservice.models.OrderHistoryModel;
 import com.capstone.ordermanagementservice.models.OrderModel;
 import com.capstone.ordermanagementservice.services.IOrderService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +33,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponseDto> createOrder(@RequestBody OrderRequestDto orderRequest) {
+    public ResponseEntity<OrderResponseDto> createOrder(@RequestBody @Valid OrderRequestDto orderRequest) {
         OrderModel order = orderMapper.orderRequestDtoToOrderModel(orderRequest);
         OrderModel createdOrder = orderService.createOrder(order);
         return ResponseEntity.ok(getOrderResponseDto(createdOrder));
@@ -44,7 +46,7 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/status")
-    public ResponseEntity<Boolean> updateOrderStatus(@PathVariable Long orderId, @RequestParam OrderStatus orderStatus) {
+    public ResponseEntity<Boolean> updateOrderStatus(@PathVariable Long orderId, @RequestParam @NotBlank OrderStatus orderStatus) {
         Boolean status = orderService.updateOrderStatus(orderId, orderStatus);
         return ResponseEntity.ok(status);
     }
