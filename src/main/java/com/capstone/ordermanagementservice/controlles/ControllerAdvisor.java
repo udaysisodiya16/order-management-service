@@ -12,15 +12,15 @@ public class ControllerAdvisor {
 
     private static final Logger LOG = LoggerFactory.getLogger(ControllerAdvisor.class);
 
-    @ExceptionHandler({IllegalArgumentException.class, NullPointerException.class})
-    public ResponseEntity<String> handleExceptions(Exception exception) {
-        exception.printStackTrace();
+    @ExceptionHandler({NullPointerException.class})
+    public ResponseEntity<String> handleNullPointerException(Exception exception) {
+        LOG.error(exception.getMessage(), exception);
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<String> handleException(Exception exception) {
-        exception.printStackTrace();
+        LOG.error(exception.getMessage(), exception);
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
