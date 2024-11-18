@@ -245,7 +245,7 @@ true
   CANCELLED, RETURNED)
 
 ```json
-"PENDING"
+"CONFIRMED"
 ```
 
 ---
