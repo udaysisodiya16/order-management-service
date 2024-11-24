@@ -2,6 +2,8 @@ package com.capstone.ordermanagementservice.services;
 
 import com.capstone.ordermanagementservice.clients.KafkaClient;
 import com.capstone.ordermanagementservice.constants.OrderStatus;
+import com.capstone.ordermanagementservice.dtos.EmailDetailDto;
+import com.capstone.ordermanagementservice.dtos.NotificationType;
 import com.capstone.ordermanagementservice.dtos.OrderNotificationDto;
 import com.capstone.ordermanagementservice.dtos.UserDetailResponseDto;
 import com.capstone.ordermanagementservice.models.OrderHistoryModel;
@@ -92,10 +94,13 @@ public class OrderService implements IOrderService {
     private void sendOrderNotification(OrderModel order) {
         UserDetailResponseDto userDetail = userService.getUserDetail(order.getUserId());
         OrderNotificationDto orderNotificationDto = new OrderNotificationDto();
-        orderNotificationDto.setFrom("ordermanagementservice@gmail.com");
-        orderNotificationDto.setTo(userDetail.getEmail());
-        orderNotificationDto.setSubject("Order Update");
-        orderNotificationDto.setBody("Your order with id:" + order.getId() + "has updated to " + order.getStatus());
+        orderNotificationDto.setType(NotificationType.EMAIL);
+        EmailDetailDto emailDetailDto = new EmailDetailDto();
+        emailDetailDto.setFrom("ordermanagementservice@gmail.com");
+        emailDetailDto.setTo(userDetail.getEmail());
+        emailDetailDto.setSubject("Order Update");
+        emailDetailDto.setBody("Your order with id:" + order.getId() + "has updated to " + order.getStatus());
+        orderNotificationDto.setEmailDetail(emailDetailDto);
         String message;
         try {
             message = objectMapper.writeValueAsString(orderNotificationDto);
