@@ -83,7 +83,7 @@ public class OrderService implements IOrderService {
 
     private void createOrderHistory(OrderModel order) {
         OrderHistoryModel history = new OrderHistoryModel();
-        history.setOrderId(order.getId());
+        history.setOrder(order);
         history.setStatus(order.getStatus());
         history.setCreatedAt(order.getCreatedAt());
         history.setLastUpdatedAt(order.getLastUpdatedAt());

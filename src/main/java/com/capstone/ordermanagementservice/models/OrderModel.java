@@ -22,5 +22,8 @@ public class OrderModel extends BaseModel {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItemModel> items;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderHistoryModel> history;
+
 }
 
