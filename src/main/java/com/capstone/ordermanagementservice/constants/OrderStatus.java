@@ -1,7 +1,8 @@
 package com.capstone.ordermanagementservice.constants;
 
 public enum OrderStatus {
-    PENDING,        // Order created but not yet processed
+    PENDING,
+    CREATED,        // Order created but not yet processed
     CONFIRMED,      // Order has been confirmed by the system
     SHIPPED,        // Order has been shipped to the delivery service
     OUT_FOR_DELIVERY, // Order is out for delivery
